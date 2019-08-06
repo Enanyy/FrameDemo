@@ -25,11 +25,20 @@ public class Test : MonoBehaviour
     public ulong entityID = 100;
 
     public LogicEntity entity;
+
+    public SeparateTree mTree;
+
+    public TestEntity TestEntity;
     // Use this for initialization
     void Start () {
 		
         logic = new LockStep(tickInterval,tickRate);
         logic.onTick += OnTick;
+
+        Vector3 size = new Vector3(100,0,100);
+        mTree = new SeparateTree(SeparateType.QuadTree, Vector3.zero, size, 4);
+
+        mTree.Add(TestEntity);
     }
 	
 	// Update is called once per frame
@@ -88,6 +97,15 @@ public class Test : MonoBehaviour
        // Debug.Log("frameCount:"+frameCount +" deltaTime:"+deltaTime);
 
         LogicManager.Instance.Update(frameCount,deltaTime);
+
     }
 
+
+    void OnDrawGizmos()
+    {
+        if (mTree != null)
+        {
+            mTree.DrawTree(Color.white, Color.black, Color.green, 0, 4, true);
+        }
+    }
 }

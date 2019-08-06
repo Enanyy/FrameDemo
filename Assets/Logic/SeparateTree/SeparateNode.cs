@@ -25,6 +25,7 @@ public class SeparateNode
     public SeparateNode[] children { get; private set; }
 
 
+    public SeparateTree tree { get; private set; }
 
     /// <summary>
     /// 子节点个数
@@ -32,8 +33,9 @@ public class SeparateNode
     private int mChildCount = 0;
 
 
-    public SeparateNode(Bounds bounds, int depth, int childCount)
+    public SeparateNode(SeparateTree tree, Bounds bounds, int depth, int childCount)
     {
+        this.tree = tree;
         this.bounds = bounds;
         this.depth = depth;
         mChildCount = childCount;
@@ -98,24 +100,34 @@ public class SeparateNode
 
     public SeparateNode Insert(ISeparateEntity entity, int depth, int maxDepth)
     {
-        if (entities.Contains(entity))
+        if (entity == null)
         {
-            return this;
-        }
-
+            return null;
+        }       
         if (depth < maxDepth)
         {
             SeparateNode node = GetContainerNode(entity, depth);
             if (node != null)
             {
+                if (entities.Contains(entity))
+                {
+                    entities.Remove(entity);
+                }
+
                 return node.Insert(entity, depth + 1, maxDepth);
             }
         }
-        entities.AddFirst(entity);
 
-        entity.node = this;
+        if (bounds.ContainsEx(entity.bounds))
+        {
+            entities.AddFirst(entity);
 
-        return this;
+            entity.node = this;
+
+            return this;
+        }
+
+        return null;
     }
 
     public bool Remove(ISeparateEntity entity)
@@ -147,31 +159,26 @@ public class SeparateNode
             return;
         }
 
-        if (detector.IsDetected(bounds))
+        if (detector.Detecte(bounds, null))
         {
             if (children != null)
             {
                 for (int i = 0; i < children.Length; i++)
                 {
-                    var node = children[i];
-                    if (node != null)
+                    var child = children[i];
+                    if (child != null)
                     {
-                        node.Trigger(detector);
+                        child.Trigger(detector);
                     }
                 }
             }
-            else
-            {
-                var node = entities.First;
-                while (node != null)
-                {
-                    if (detector.IsDetected(node.Value.bounds))
-                    {
-                        detector.OnTrigger(node.Value);
-                    }
 
-                    node = node.Next;
-                }
+            var node = entities.First;
+            while (node != null)
+            {
+                detector.Detecte(node.Value.bounds, node.Value);
+
+                node = node.Next;
             }
         }
 
@@ -226,7 +233,7 @@ public class SeparateNode
             Bounds bounds = new Bounds(center, size);
             if (bounds.ContainsEx(entity.bounds))
             {
-                SeparateNode newNode = new SeparateNode(bounds, depth + 1, mChildCount);
+                SeparateNode newNode = new SeparateNode(tree, bounds, depth + 1, mChildCount);
                 node = newNode;
                 result = node;
             }

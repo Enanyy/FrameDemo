@@ -40,7 +40,7 @@ public class SeparateTree
         this.treeType = treeType;
         this.maxDepth = maxDepth;
 
-        root = new SeparateNode(new Bounds(center, size), 0, this.treeType == SeparateType.QuadTree ? 4 : 8);
+        root = new SeparateNode(this, new Bounds(center, size), 0, this.treeType == SeparateType.QuadTree ? 4 : 8);
     }
 
     public void Add(ISeparateEntity entity)

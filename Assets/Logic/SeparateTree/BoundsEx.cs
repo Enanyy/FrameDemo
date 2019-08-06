@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-
 public static class BoundsEx
 {
     /// <summary>
@@ -32,5 +30,17 @@ public static class BoundsEx
         if (!bounds.Contains(compareTo.center + new Vector3(-halfX, -halfY, halfZ)))
             return false;
         return true;
+    }
+    /// <summary>
+    /// 两个包围体是否相交
+    /// </summary>
+    /// <param name="bounds"></param>
+    /// <param name="compareTo"></param>
+    /// <returns></returns>
+    public static bool OverlapsEx(this Bounds bounds, Bounds compareTo)
+    {
+        Vector3 closetPoint = bounds.ClosestPoint(compareTo.center);
+
+        return compareTo.Contains(closetPoint);
     }
 }

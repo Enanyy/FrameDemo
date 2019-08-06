@@ -11,13 +11,8 @@ public interface ISeparateDetector
     /// </summary>
     /// <param name="bounds">包围盒</param>
     /// <returns></returns>
-    bool IsDetected(Bounds bounds);
+    bool Detecte(Bounds bounds,ISeparateEntity entity);
 
-    /// <summary>
-    /// 检测成功的物体
-    /// </summary>
-    /// <param name="entity"></param>
-    void OnTrigger(ISeparateEntity entity);
 
     /// <summary>
     /// 触发器位置
