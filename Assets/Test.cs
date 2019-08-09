@@ -11,6 +11,7 @@ public class Test : MonoBehaviour
     public uint tickRate = 3;
 
     public ulong frameCount;
+    public ulong currentFrameCount;
 
     public ulong tickCount;
 
@@ -48,11 +49,10 @@ public class Test : MonoBehaviour
 
 
         frameCount = logic.mFrameCount;
+        currentFrameCount = logic.mCurrentFrameCount;
         tickCount = logic.mTickCount;
         tickCurrentInterval = logic.mTickCurrentInterval;
 
-
-       
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {

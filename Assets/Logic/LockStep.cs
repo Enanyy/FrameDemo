@@ -8,10 +8,11 @@ public class LockStep
     /// 帧数(服务器推来的)
     /// </summary>
     public ulong mFrameCount { get; private set; }
+
     /// <summary>
     /// 当前运行到的帧数
     /// </summary>
-    public ulong mCurrentFrameCount {get { return mTickCount / mTickRate; }}
+    public ulong mCurrentFrameCount;
     /// <summary>
     /// Tick次数
     /// </summary>
@@ -60,6 +61,8 @@ public class LockStep
         mTickCount = 0;
         mTickTime = 0;
         mTotalTime = 0;
+        mCurrentFrameCount = 0;
+        mTickCurrentInterval = mTickInterval;
 
         Next();
 
@@ -82,7 +85,7 @@ public class LockStep
         {
             mTickTime -= mTickCurrentInterval / 1000f;
 
-            if (mTickCount < mFrameCount * mTickRate)
+            if (mTickCount < mCurrentFrameCount * mTickRate)
             {
                 if (onTick != null)
                 {
@@ -90,6 +93,17 @@ public class LockStep
                 }
 
                 mTickCount++;
+            }
+            else
+            {
+                if (mCurrentFrameCount < mFrameCount)
+                {
+                    ulong count = mFrameCount - mCurrentFrameCount;
+
+                    mTickCurrentInterval = mTickInterval / (uint)count;
+
+                    mCurrentFrameCount++;
+                }
             }
         }
     }
@@ -103,8 +117,6 @@ public class LockStep
         {
             mFrameCount++;
 
-            ulong count = mFrameCount * mTickRate - mTickCount;
-            mTickCurrentInterval = (uint)(mTickInterval * mTickRate / count);
         }
     }
     /// <summary>
